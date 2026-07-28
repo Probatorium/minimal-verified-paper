@@ -1,15 +1,20 @@
-# Uniformity of the First 1000 Decimal Digits of pi
+# Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact
 
 Alexis García Hurtado · 2026 · version 1.0.0
 
 A two-page statistical paper packaged so that the package fails if the paper and
 the computation stop agreeing.
 
+The method is called **Stasis**: every number a paper publishes is frozen as an
+executable assertion inside the paper's own package, so that the package refuses
+to pass whenever the text and the computation diverge. A number frozen that way
+is a **frozen claim**, and freezing one is the unit of work.
+
 The statistical result is small on purpose: a goodness-of-fit test of the first
 thousand decimal digits of pi against an even spread, which does not reject. The
 subject of the work is the apparatus around it. This repository is the minimal
-worked example of that apparatus, small enough to read in one sitting and to
-clone as a starting point.
+worked example of Stasis, small enough to read in one sitting and to clone as a
+starting point.
 
 ## Run it
 
@@ -28,13 +33,13 @@ python make_figure.py    regenerate the figure from the data
 python mutate.py         re-run the mutation study
 ```
 
-## What the apparatus does
+## What Stasis does here
 
-**1. Frozen figures as executable assertions.** Every number printed in
-`paper.md` exists in `src/frozen_claims.py` with the exact string the manuscript
-uses. Verification recomputes the value and compares it to that string, and then
-reads the manuscript and confirms the string is still there, in the section it
-belongs to. Change the code and it fails; change the prose and it fails.
+**1. Frozen claims.** Every number printed in `paper.md` is frozen in
+`src/frozen_claims.py` with the exact string the manuscript uses. Verification
+recomputes the value and compares it to that string, and then reads the
+manuscript and confirms the string is still there, in the section it belongs to.
+Change the code and it fails; change the prose and it fails.
 
 **2. This map.** See below: each part of the paper, and the checks that hold it
 up.
@@ -172,12 +177,19 @@ silently repaired. Finding out that something went stale is the point.
 
 ## Reusing this as a template
 
-Replace the data, the statistics and the manuscript; keep the shape. The parts
+This repository is Stasis in its smallest complete form: eight mechanisms, one
+command, one worked example. To apply Stasis to a paper of your own, replace the
+data, the statistics and the manuscript, and keep the shape. The parts
 that carry over unchanged are `manuscript.py`, the check modules, `verify.py`
 and `mutate.py`. The parts that must be rewritten for a new paper are
 `front_matter.py`, `frozen_claims.py`, `cited_constants.py`, the watch list in
 `forbidden_phrases.py`, and the map in this README. A watch list copied from
 another paper is not a watch list; each paper has its own temptations.
+
+The discipline that makes the rest work: freeze a number before you write it.
+Add the frozen claim, run the verification, and only then type the value into
+the prose. A number that reaches the manuscript before it has been frozen is a
+number nothing is holding.
 
 ## Licence
 

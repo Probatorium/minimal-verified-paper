@@ -9,7 +9,10 @@ parser is a dependency. A Python module is read by the interpreter that is
 already running.
 """
 
-TITLE = "Uniformity of the First 1000 Decimal Digits of pi"
+#: The canonical title of this work. One string, reproduced character for
+#: character on every surface that names it. It carries both halves of what this
+#: artifact is: the statistical case it reports, and the method it demonstrates.
+TITLE = "Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact"
 
 AUTHOR = "Alexis García Hurtado"
 

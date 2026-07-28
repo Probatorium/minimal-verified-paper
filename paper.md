@@ -1,16 +1,16 @@
 ---
-title: Uniformity of the First 1000 Decimal Digits of pi
+title: "Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact"
 author: Alexis García Hurtado
 year: 2026
 version: 1.0.0
 ---
 
-# Uniformity of the First 1000 Decimal Digits of pi
+# Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact
 
 Alexis García Hurtado
 
 A deliberately small statistical result, published together with an artifact
-that refuses to build unless every figure in this text still matches the
+that refuses to build unless every number in this text still matches the
 computation that produced it.
 
 ## 1. Question
@@ -119,23 +119,29 @@ computation can settle.
 
 ## 6. How this paper verifies itself
 
+This artifact applies Stasis. Stasis is the practice of freezing every number a
+paper publishes as an executable assertion inside the paper's own package, so
+that the package refuses to pass whenever the text and the computation stop
+agreeing; a number frozen that way is called a frozen claim.
+
 Running `python verify.py` executes 104 assertions in about a second, using only
 the Python standard library and no network. Every number printed in the two
-preceding sections exists inside the package as an assertion with its expected
-value frozen. If the computation changes, the assertion fails. If this text is
-edited so that a number no longer matches, the assertion fails as well: the
-package reads the manuscript and checks that each frozen string still appears in
-the section it belongs to. A separate check walks the manuscript and refuses any
-numeric literal that no assertion covers.
+preceding sections is a frozen claim: it exists inside the package carrying the
+exact string this text uses. If the computation changes, the claim fails. If
+this text is edited so that a number no longer matches, the claim fails as well,
+because the package reads the manuscript and checks that each frozen string
+still appears in the section it belongs to. A separate check walks the
+manuscript and refuses any numeric literal that no frozen claim covers.
 
 The apparatus is described in full in `README.md`, which also carries the map
-from each part of this paper to the checks that support it. Its components are:
-structural invariants that run before any statistic is computed, so that a
-malformed input dies before it can produce a plausible result; the double
-derivation described above, extended to every reported quantity; an enforced
-separation between values taken from a source and values derived here; a watch
-list of phrases this text may not contain; and an exact comparison of the title,
-author and year across the manuscript, the README and the BibTeX record.
+from each part of this paper to the checks that support it. Besides freezing the
+numbers, it runs structural invariants before any statistic is computed, so that
+a malformed input dies before it can produce a plausible result; it extends the
+double derivation described above to every reported quantity; it enforces a
+separation between values taken from a source and values derived here; it holds
+a watch list of phrases this text may not contain; and it compares the title,
+author and year across the manuscript, the README and the BibTeX record,
+character for character.
 
 The evidence that these assertions bite is a mutation study, reported in
 `mutation_report.md`. It corrupts the package on purpose in 11 different ways
