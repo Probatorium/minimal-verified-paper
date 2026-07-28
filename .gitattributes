@@ -1,0 +1,9 @@
+# Normalise every text file to LF, in the repository and on checkout.
+#
+# This matters more here than in an ordinary project: check_60_figure.py
+# compares the committed SVG against a freshly rendered one, and make_figure.py
+# writes LF explicitly. Letting the platform decide line endings would make the
+# artifact differ byte for byte between a Windows clone and a Linux one, which
+# is exactly the kind of silent platform dependence this package exists to rule
+# out.
+* text=auto eol=lf

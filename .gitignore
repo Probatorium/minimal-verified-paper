@@ -1,0 +1,9 @@
+# Byte-compiled Python. Everything else in this package is committed on purpose.
+__pycache__/
+*.py[cod]
+
+# Note what is NOT ignored, and why:
+#   figures/digit_frequencies.svg  is checked byte for byte by check_60
+#   mutation_report.md             is read back by check_95 and by check_40
+# Both are generated files, and both are evidence. A reader who clones this
+# repository must be able to run verify.py without regenerating anything.
