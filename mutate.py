@@ -152,6 +152,19 @@ MUTANTS = (
         expectation="One accent dropped on one surface. Exact comparison should catch "
                     "what a fuzzy one would not.",
     ),
+    dict(
+        name="front_matter_title_drifted",
+        family=SURFACE,
+        path="CITATION.bib",
+        old="{Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact}",
+        new="{Uniformity of the First 1000 Decimal Digits of pi}",
+        expectation="The subtitle is dropped from the BibTeX record and from nowhere "
+                    "else. The title is the longest string this package compares and the "
+                    "one most likely to drift, and CITATION.bib is the surface a citation "
+                    "is built from. Should die on that surface and on no other, showing "
+                    "that the front matter check bites on the title and not only on the "
+                    "author.",
+    ),
 )
 
 #: Files and folders never copied into a mutant.

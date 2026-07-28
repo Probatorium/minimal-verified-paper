@@ -10,7 +10,7 @@ those are caught even harder, but counting them as killed would flatter
 the suite, so they are kept apart.
 
 ```
-MUTANTS: 11
+MUTANTS: 12
 MIN_CHECKS_KILLED: 1
 MAX_CHECKS_KILLED: 35
 ```
@@ -33,6 +33,7 @@ before any mutation was applied.
 | `figure_gone_stale` | published surface | 2 | 0 |
 | `forbidden_phrase_reintroduced` | published surface | 1 | 0 |
 | `front_matter_drifted` | published surface | 1 | 0 |
+| `front_matter_title_drifted` | published surface | 1 | 0 |
 
 ## What each mutant killed
 
@@ -128,4 +129,12 @@ Family: published surface. Target: `README.md`.
 Expected before running: One accent dropped on one surface. Exact comparison should catch what a fuzzy one would not.
 
 Killed 1 assertion(s): `FM-author-README.md`
+
+### `front_matter_title_drifted`
+
+Family: published surface. Target: `CITATION.bib`.
+
+Expected before running: The subtitle is dropped from the BibTeX record and from nowhere else. The title is the longest string this package compares and the one most likely to drift, and CITATION.bib is the surface a citation is built from. Should die on that surface and on no other, showing that the front matter check bites on the title and not only on the author.
+
+Killed 1 assertion(s): `FM-title-CITATION.bib`
 

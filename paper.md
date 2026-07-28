@@ -144,13 +144,23 @@ author and year across the manuscript, the README and the BibTeX record,
 character for character.
 
 The evidence that these assertions bite is a mutation study, reported in
-`mutation_report.md`. It corrupts the package on purpose in 11 different ways
+`mutation_report.md`. It corrupts the package on purpose in 12 different ways
 and records which assertions die. Every mutant is caught. The weakest kills 1
 assertion and the strongest kills 35, and the report names them individually,
 including the mutant that swaps two digits deep in the sequence, which changes
 no count and is therefore visible only to the comparison between the two
 computation paths. That case is the informative one: it marks the edge of what
 this apparatus covers.
+
+The count of mutants in the paragraph above is itself a frozen claim, and it did
+not update itself. It read eleven until a twelfth mutant was added, one that
+alters the title of this work on a single surface and leaves the others intact,
+so that the study would exercise the longest string the package compares rather
+than only the shortest. The verification then failed, named the claim, and
+printed both the value it expected and the value it had found. Only afterwards
+was the figure in this text changed. That sequence is the method operating on
+itself, and it is the intended one: a frozen claim never follows the work, it
+contradicts the work until a person decides which of the two is wrong.
 
 ## References
 

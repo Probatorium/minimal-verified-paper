@@ -128,8 +128,10 @@ CLAIMS = (
     # -- 6. How this paper verifies itself --------------------------------
     Claim("n_checks", COMPUTED_META, "6. How this paper verifies itself", "104", "%d",
           "Total number of checks the verification runs, counting this one."),
-    Claim("n_mutants", COMPUTED_META, "6. How this paper verifies itself", "11", "%d",
-          "Number of mutants in the mutation study."),
+    Claim("n_mutants", COMPUTED_META, "6. How this paper verifies itself", "12", "%d",
+          "Number of mutants in the mutation study. Raised from eleven when a "
+          "twelfth mutant was added; the verification failed first and this "
+          "string was edited afterwards, on purpose."),
     Claim("min_checks_killed", COMPUTED_META, "6. How this paper verifies itself", "1", "%d",
           "Fewest checks killed by any single mutant."),
     Claim("max_checks_killed", COMPUTED_META, "6. How this paper verifies itself", "35", "%d",
