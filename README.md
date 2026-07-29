@@ -37,9 +37,11 @@ python mutate.py         re-run the mutation study
 
 **1. Frozen claims.** Every number printed in `paper.md` is frozen in
 `src/frozen_claims.py` with the exact string the manuscript uses. Verification
-recomputes the value and compares it to that string, and then reads the
-manuscript and confirms the string is still there, in the section it belongs to.
-Change the code and it fails; change the prose and it fails.
+recomputes the value, compares it to that string, and then reads the manuscript
+and confirms the string is still **where the claim says it is**: on the line an
+anchor identifies, or exactly as many times as the claim declares. Change the
+code and it fails; change the prose and it fails. Presence in the section is not
+enough, and the reason is in design note 4.
 
 **2. This map.** See below: each part of the paper, and the checks that hold it
 up.
@@ -73,9 +75,13 @@ package checks that both computation paths reproduce it. In the other direction,
 computed result also exist as a literal in the code, where the two could drift
 apart.
 
-**8. Front matter, character for character.** Title, author and year are
-declared once in `src/front_matter.py` and compared by exact string equality
-against the manuscript, this README and the BibTeX record.
+**8. Front matter, at every declared location.** Title, author, year and
+version are declared once in `src/front_matter.py`. Every place each of them is
+supposed to live is listed in `check_80_front_matter.py` -- the YAML field, the
+level-one heading, the byline position, the BibTeX field -- and the value is
+extracted from that place and compared. The year in the BibTeX record is read as
+a field rather than searched for, because the digits `2026` also sit inside the
+citation key.
 
 ## Claim-to-check map
 
@@ -160,11 +166,23 @@ list are ordinary words when a document is describing the method rather than
 using it. This README had to be reworded once for exactly that reason. The check
 matches text, not intent, and rewording the prose is the correct response.
 
-**4. Coverage is a floor, not a ceiling.** The check that refuses unclaimed
-numbers in the manuscript works by string. A small integer that happens to match
-some claim's text passes wherever it appears. The check that refuses hard-coded
-results ignores integers below ten for the same reason. Both limits are written
-down in the checks themselves rather than left for a reader to discover.
+**4. Presence is not location, and this package learned that the hard way.**
+An external defect injection study measured this package and found one blind
+spot twice over. Of twenty front matter drifts injected one surface at a time,
+nine escaped, all of them because a string that lives in two places could be
+edited in one while a whole-file search found the other. Of the manuscript
+numbers it edited, every string that occurs once in its section was caught and
+every string that occurs more than once escaped. Both checks now anchor to a
+declared location: `check_80` extracts each value from the field, heading or
+byline position it belongs to, and each frozen claim either names the line it
+sits on or freezes how many times it appears. The five escapes are kept as
+permanent mutants so the repair cannot rot.
+
+What remains a floor rather than a ceiling: the check that refuses unclaimed
+numbers still works by string, so a small integer matching some claim's text
+passes wherever it appears, and the check that refuses hard-coded results still
+ignores integers below ten. Both limits are written down in the checks
+themselves rather than left for a reader to discover.
 
 **5. One assertion lives outside the check modules.** The suite counts its own
 assertions, and that number is not known until the suite has finished, so it is

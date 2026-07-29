@@ -165,6 +165,68 @@ MUTANTS = (
                     "that the front matter check bites on the title and not only on the "
                     "author.",
     ),
+
+    # ---------------------------------------------------------------------
+    # The five below are regression mutants. Every one of them ESCAPED this
+    # package when a defect injection study measured it, because the checks
+    # asked whether a string was present somewhere rather than whether it was
+    # present where it belongs. They are kept permanently so that the fix
+    # cannot quietly rot.
+    # ---------------------------------------------------------------------
+    dict(
+        name="front_matter_title_yaml_only",
+        family=SURFACE,
+        path="paper.md",
+        old='title: "Uniformity of the First 1000 Decimal Digits of pi: A Minimal Stasis Artifact"',
+        new='title: "Uniformity of the First 1000 Decimal Digits of pi"',
+        expectation="The title drifts in the YAML block while the level-one heading "
+                    "keeps the full string. This escaped before the front matter check "
+                    "started reading declared locations, because a whole-file search "
+                    "found the title in the heading and was satisfied.",
+    ),
+    dict(
+        name="front_matter_author_byline_only",
+        family=SURFACE,
+        path="paper.md",
+        old="A Minimal Stasis Artifact\n\nAlexis García Hurtado",
+        new="A Minimal Stasis Artifact\n\nAlexis Garcia Hurtado",
+        expectation="The accent drops from the byline while the YAML field keeps it. "
+                    "Escaped for the same reason as the title above: two copies, one "
+                    "search.",
+    ),
+    dict(
+        name="front_matter_year_citation_field",
+        family=SURFACE,
+        path="CITATION.bib",
+        old="  year         = {2026},",
+        new="  year         = {2027},",
+        expectation="The year field changes while the citation key keeps the digits "
+                    "2026 inside it. Escaped because a substring search could not tell "
+                    "a correct year from a stale one sitting beside a key that happens "
+                    "to contain the same digits. The check now reads the field.",
+    ),
+    dict(
+        name="manuscript_duplicate_number_edited",
+        family=SURFACE,
+        path="paper.md",
+        old="count 100.",
+        new="count 101.",
+        expectation="The expected count is stated twice in its section, and one copy "
+                    "is edited. Escaped because presence in the section was satisfied "
+                    "by the untouched copy. The claim now freezes how many times the "
+                    "number must appear.",
+    ),
+    dict(
+        name="manuscript_table_row_edited",
+        family=SURFACE,
+        path="paper.md",
+        old="| `0`   | 93             |",
+        new="| `0`   | 94             |",
+        expectation="One cell of the results table is edited. Two digits share the "
+                    "count 93 and the replacement 94 is another digit's count, so "
+                    "neither presence nor the orphan-number scan could see it. Each row "
+                    "is now anchored to its own line.",
+    ),
 )
 
 #: Files and folders never copied into a mutant.

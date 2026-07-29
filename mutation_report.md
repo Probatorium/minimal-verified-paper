@@ -10,7 +10,7 @@ those are caught even harder, but counting them as killed would flatter
 the suite, so they are kept apart.
 
 ```
-MUTANTS: 12
+MUTANTS: 17
 MIN_CHECKS_KILLED: 1
 MAX_CHECKS_KILLED: 35
 ```
@@ -24,7 +24,7 @@ before any mutation was applied.
 | ------ | ------ | -----: | ----------: |
 | `data_digit_flipped` | input data | 10 | 0 |
 | `data_tail_zeroed` | input data | 35 | 0 |
-| `data_truncated` | input data | 1 | 90 |
+| `data_truncated` | input data | 1 | 95 |
 | `data_adjacent_swap` | input data | 1 | 0 |
 | `cited_constant_corrupted` | input data | 2 | 0 |
 | `manuscript_number_edited` | published surface | 2 | 0 |
@@ -34,6 +34,11 @@ before any mutation was applied.
 | `forbidden_phrase_reintroduced` | published surface | 1 | 0 |
 | `front_matter_drifted` | published surface | 1 | 0 |
 | `front_matter_title_drifted` | published surface | 1 | 0 |
+| `front_matter_title_yaml_only` | published surface | 1 | 0 |
+| `front_matter_author_byline_only` | published surface | 1 | 0 |
+| `front_matter_year_citation_field` | published surface | 1 | 0 |
+| `manuscript_duplicate_number_edited` | published surface | 1 | 0 |
+| `manuscript_table_row_edited` | published surface | 1 | 0 |
 
 ## What each mutant killed
 
@@ -64,7 +69,7 @@ computed, which is the intended behaviour for input this broken.
 
 Killed 1 assertion(s): `INV-len-b`
 
-Never reached 90 assertion(s), the first being `CIT-agrees-a`.
+Never reached 95 assertion(s), the first being `CIT-agrees-a`.
 
 ### `data_adjacent_swap`
 
@@ -128,7 +133,7 @@ Family: published surface. Target: `README.md`.
 
 Expected before running: One accent dropped on one surface. Exact comparison should catch what a fuzzy one would not.
 
-Killed 1 assertion(s): `FM-author-README.md`
+Killed 1 assertion(s): `FM-author-README.md-byline`
 
 ### `front_matter_title_drifted`
 
@@ -136,5 +141,45 @@ Family: published surface. Target: `CITATION.bib`.
 
 Expected before running: The subtitle is dropped from the BibTeX record and from nowhere else. The title is the longest string this package compares and the one most likely to drift, and CITATION.bib is the surface a citation is built from. Should die on that surface and on no other, showing that the front matter check bites on the title and not only on the author.
 
-Killed 1 assertion(s): `FM-title-CITATION.bib`
+Killed 1 assertion(s): `FM-title-CITATION.bib-field`
+
+### `front_matter_title_yaml_only`
+
+Family: published surface. Target: `paper.md`.
+
+Expected before running: The title drifts in the YAML block while the level-one heading keeps the full string. This escaped before the front matter check started reading declared locations, because a whole-file search found the title in the heading and was satisfied.
+
+Killed 1 assertion(s): `FM-title-paper.md-yaml`
+
+### `front_matter_author_byline_only`
+
+Family: published surface. Target: `paper.md`.
+
+Expected before running: The accent drops from the byline while the YAML field keeps it. Escaped for the same reason as the title above: two copies, one search.
+
+Killed 1 assertion(s): `FM-author-paper.md-byline`
+
+### `front_matter_year_citation_field`
+
+Family: published surface. Target: `CITATION.bib`.
+
+Expected before running: The year field changes while the citation key keeps the digits 2026 inside it. Escaped because a substring search could not tell a correct year from a stale one sitting beside a key that happens to contain the same digits. The check now reads the field.
+
+Killed 1 assertion(s): `FM-year-CITATION.bib-field`
+
+### `manuscript_duplicate_number_edited`
+
+Family: published surface. Target: `paper.md`.
+
+Expected before running: The expected count is stated twice in its section, and one copy is edited. Escaped because presence in the section was satisfied by the untouched copy. The claim now freezes how many times the number must appear.
+
+Killed 1 assertion(s): `FRZ-expected_count`
+
+### `manuscript_table_row_edited`
+
+Family: published surface. Target: `paper.md`.
+
+Expected before running: One cell of the results table is edited. Two digits share the count 93 and the replacement 94 is another digit's count, so neither presence nor the orphan-number scan could see it. Each row is now anchored to its own line.
+
+Killed 1 assertion(s): `FRZ-count_0`
 

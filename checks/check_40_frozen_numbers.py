@@ -51,11 +51,7 @@ def run(context):
         if claim.section not in paper_sections:
             problems.append("section %r does not exist in the manuscript" % claim.section)
         else:
-            tokens = manuscript.numbers_in(paper_sections[claim.section])
-            if claim.text not in tokens:
-                problems.append(
-                    "the string %s does not appear in manuscript section %r"
-                    % (claim.text, claim.section))
+            problems.extend(_placement_problems(claim, paper_sections[claim.section]))
 
         results.append(check(
             "FRZ-" + claim.id,
@@ -64,3 +60,35 @@ def run(context):
         ))
 
     return results
+
+
+def _placement_problems(claim, body):
+    """Is the number where the claim says it is, not merely somewhere nearby?
+
+    Asking only whether a frozen string appears in its section was measured to
+    be this method's blind spot. A defect injection study over this package
+    found that edits to a string occurring once in its section were caught every
+    time, and edits to a string occurring more than once were caught no times,
+    because the untouched copy kept the check satisfied. Both branches below
+    exist to close that, and which branch applies is declared per claim in
+    `src/frozen_claims.py`.
+    """
+    if claim.anchor:
+        # The anchor is matched against the raw line, because stripping inline
+        # code would erase the very markers that identify a table row.
+        carrying = [line for line in body.split("\n") if claim.anchor in line]
+        if len(carrying) != 1:
+            return ["the anchor %r identifies %d lines in section %r; an anchor "
+                    "must identify exactly one"
+                    % (claim.anchor, len(carrying), claim.section)]
+        if claim.text not in manuscript.numbers_in(carrying[0]):
+            return ["the line anchored by %r does not carry %s; it reads %r"
+                    % (claim.anchor, claim.text, carrying[0].strip())]
+        return []
+
+    seen = manuscript.numbers_in(body).count(claim.text)
+    if seen != claim.occurrences:
+        return ["the string %s appears %d time(s) in manuscript section %r, and "
+                "the claim is frozen at %d"
+                % (claim.text, seen, claim.section, claim.occurrences)]
+    return []

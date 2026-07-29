@@ -44,7 +44,30 @@ COMPUTED_META = "COMPUTED_META"
 DECLARED = "DECLARED"
 CITED = "CITED"
 
-Claim = namedtuple("Claim", "id kind section text fmt description")
+#: A frozen claim.
+#:
+#: `anchor` and `occurrences` say WHERE in the section the number must be, not
+#: merely that it is somewhere in it. Checking presence alone was measured to be
+#: the method's blind spot: a defect injection study over this package found
+#: that when a frozen string occurs once in its section every edit to it is
+#: caught, and when it occurs more than once none are, because editing one copy
+#: leaves the other satisfying the check. Two rules close that:
+#:
+#:   anchor      a substring of the line the value must be on. Exactly one line
+#:               in the section may contain it, and that line must carry the
+#:               value. Use it when several claims share one text -- the two
+#:               digits that both count 93, or the count 116 that appears in the
+#:               table and again in the prose.
+#:   occurrences how many times the text must appear in the section. Defaults to
+#:               1, and the default is now enforced, so a number that starts
+#:               appearing twice breaks the build instead of creating a hiding
+#:               place. Use a value above 1 when one claim really is stated more
+#:               than once.
+#:
+#: A claim sets one or the other, never both: an anchor identifies a line, and
+#: counting is what you do when you are not identifying a line.
+Claim = namedtuple("Claim", "id kind section text fmt description anchor occurrences")
+Claim.__new__.__defaults__ = (None, 1)
 
 
 # --------------------------------------------------------------------------
@@ -86,32 +109,41 @@ CLAIMS = (
     # -- 3. Null model and test -------------------------------------------
     Claim("n_categories_null", DECLARED, "3. Null model and test", "10", "%d",
           "Number of categories in the null model."),
+    # Stated twice in this section, once where it is defined and once where the
+    # chi-square approximation is justified. Both are the same claim, so the
+    # count is what is frozen; editing either copy breaks it.
     Claim("expected_count", COMPUTED_DUAL, "3. Null model and test", "100", "%d",
-          "Expected count per digit under the uniform null: n divided by k."),
+          "Expected count per digit under the uniform null: n divided by k.",
+          None, 2),
     Claim("degrees_of_freedom", COMPUTED_DUAL, "3. Null model and test", "9", "%d",
           "Degrees of freedom: number of categories minus one."),
     Claim("alpha", DECLARED, "3. Null model and test", "0.05", "%.2f",
           "Significance level fixed in advance."),
 
     # -- 4. Result ---------------------------------------------------------
-    Claim("count_0", COMPUTED_DUAL, "4. Result", "93", "%d", "Observed count of digit 0."),
-    Claim("count_1", COMPUTED_DUAL, "4. Result", "116", "%d", "Observed count of digit 1."),
-    Claim("count_2", COMPUTED_DUAL, "4. Result", "103", "%d", "Observed count of digit 2."),
-    Claim("count_3", COMPUTED_DUAL, "4. Result", "102", "%d", "Observed count of digit 3."),
-    Claim("count_4", COMPUTED_DUAL, "4. Result", "93", "%d", "Observed count of digit 4."),
-    Claim("count_5", COMPUTED_DUAL, "4. Result", "97", "%d", "Observed count of digit 5."),
-    Claim("count_6", COMPUTED_DUAL, "4. Result", "94", "%d", "Observed count of digit 6."),
-    Claim("count_7", COMPUTED_DUAL, "4. Result", "95", "%d", "Observed count of digit 7."),
-    Claim("count_8", COMPUTED_DUAL, "4. Result", "101", "%d", "Observed count of digit 8."),
-    Claim("count_9", COMPUTED_DUAL, "4. Result", "106", "%d", "Observed count of digit 9."),
+    # Every row of the table is anchored to its own row. Two digits share the
+    # count 93 and a third shares 116 with the prose below, so presence in the
+    # section cannot say which cell a number belongs to. The row can.
+    Claim("count_0", COMPUTED_DUAL, "4. Result", "93", "%d", "Observed count of digit 0.", "| `0`"),
+    Claim("count_1", COMPUTED_DUAL, "4. Result", "116", "%d", "Observed count of digit 1.", "| `1`"),
+    Claim("count_2", COMPUTED_DUAL, "4. Result", "103", "%d", "Observed count of digit 2.", "| `2`"),
+    Claim("count_3", COMPUTED_DUAL, "4. Result", "102", "%d", "Observed count of digit 3.", "| `3`"),
+    Claim("count_4", COMPUTED_DUAL, "4. Result", "93", "%d", "Observed count of digit 4.", "| `4`"),
+    Claim("count_5", COMPUTED_DUAL, "4. Result", "97", "%d", "Observed count of digit 5.", "| `5`"),
+    Claim("count_6", COMPUTED_DUAL, "4. Result", "94", "%d", "Observed count of digit 6.", "| `6`"),
+    Claim("count_7", COMPUTED_DUAL, "4. Result", "95", "%d", "Observed count of digit 7.", "| `7`"),
+    Claim("count_8", COMPUTED_DUAL, "4. Result", "101", "%d", "Observed count of digit 8.", "| `8`"),
+    Claim("count_9", COMPUTED_DUAL, "4. Result", "106", "%d", "Observed count of digit 9.", "| `9`"),
     Claim("chi_square", COMPUTED_DUAL, "4. Result", "4.74", "%.2f",
           "Pearson chi-square statistic against the uniform null."),
     Claim("degrees_of_freedom_result", COMPUTED_DUAL, "4. Result", "9", "%d",
           "Degrees of freedom, restated with the result."),
     Claim("p_value", COMPUTED_DUAL, "4. Result", "0.8564", "%.4f",
           "Upper-tail probability of the chi-square statistic."),
+    # Shares its value with count_1, which is the same number reported twice for
+    # two different reasons. Anchored to the prose sentence, not the table row.
     Claim("largest_count", COMPUTED_DUAL, "4. Result", "116", "%d",
-          "The largest observed count across the ten digits."),
+          "The largest observed count across the ten digits.", "with a count of"),
     Claim("post_hoc_z", COMPUTED_DUAL, "4. Result", "1.6865", "%.4f",
           "Standardized residual of the modal digit under the binomial null."),
     Claim("post_hoc_p", COMPUTED_DUAL, "4. Result", "0.0917", "%.4f",
@@ -126,12 +158,13 @@ CLAIMS = (
           "Sample size, restated where its limits are discussed."),
 
     # -- 6. How this paper verifies itself --------------------------------
-    Claim("n_checks", COMPUTED_META, "6. How this paper verifies itself", "104", "%d",
+    Claim("n_checks", COMPUTED_META, "6. How this paper verifies itself", "109", "%d",
           "Total number of checks the verification runs, counting this one."),
-    Claim("n_mutants", COMPUTED_META, "6. How this paper verifies itself", "12", "%d",
-          "Number of mutants in the mutation study. Raised from eleven when a "
-          "twelfth mutant was added; the verification failed first and this "
-          "string was edited afterwards, on purpose."),
+    Claim("n_mutants", COMPUTED_META, "6. How this paper verifies itself", "17", "%d",
+          "Number of mutants in the mutation study. Raised twice, each time "
+          "after the verification failed and named this claim: once for a "
+          "twelfth mutant, then by five at once for the escapes an external "
+          "defect injection study measured."),
     Claim("min_checks_killed", COMPUTED_META, "6. How this paper verifies itself", "1", "%d",
           "Fewest checks killed by any single mutant."),
     Claim("max_checks_killed", COMPUTED_META, "6. How this paper verifies itself", "35", "%d",

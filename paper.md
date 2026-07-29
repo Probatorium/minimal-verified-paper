@@ -124,7 +124,7 @@ paper publishes as an executable assertion inside the paper's own package, so
 that the package refuses to pass whenever the text and the computation stop
 agreeing; a number frozen that way is called a frozen claim.
 
-Running `python verify.py` executes 104 assertions in about a second, using only
+Running `python verify.py` executes 109 assertions in about a second, using only
 the Python standard library and no network. Every number printed in the two
 preceding sections is a frozen claim: it exists inside the package carrying the
 exact string this text uses. If the computation changes, the claim fails. If
@@ -144,7 +144,7 @@ author and year across the manuscript, the README and the BibTeX record,
 character for character.
 
 The evidence that these assertions bite is a mutation study, reported in
-`mutation_report.md`. It corrupts the package on purpose in 12 different ways
+`mutation_report.md`. It corrupts the package on purpose in 17 different ways
 and records which assertions die. Every mutant is caught. The weakest kills 1
 assertion and the strongest kills 35, and the report names them individually,
 including the mutant that swaps two digits deep in the sequence, which changes
@@ -152,14 +152,18 @@ no count and is therefore visible only to the comparison between the two
 computation paths. That case is the informative one: it marks the edge of what
 this apparatus covers.
 
-The count of mutants in the paragraph above is itself a frozen claim, and it did
-not update itself. It read eleven until a twelfth mutant was added, one that
-alters the title of this work on a single surface and leaves the others intact,
-so that the study would exercise the longest string the package compares rather
-than only the shortest. The verification then failed, named the claim, and
-printed both the value it expected and the value it had found. Only afterwards
-was the figure in this text changed. That sequence is the method operating on
-itself, and it is the intended one: a frozen claim never follows the work, it
+The count of mutants in the paragraph above is itself a frozen claim, and it has
+never updated itself. It read eleven, then twelve, and now stands where it does
+because five mutants were added at once. Those five are not inventions. Each one
+reproduces a defect that an external study injected into this package and that
+this package failed to catch: the front matter check and the frozen figures both
+asked only whether a string was present somewhere, not whether it was present
+where it belongs, so a value stated twice could be edited in one copy while the
+untouched copy kept the check satisfied. Both now anchor to a declared location,
+and the five escapes are kept as permanent mutants so the repair cannot rot. The
+order was the usual one: the checks were changed first, the verification then
+failed and named every claim whose number had moved, and only afterwards were
+the numbers in this text edited. A frozen claim never follows the work, it
 contradicts the work until a person decides which of the two is wrong.
 
 ## References
