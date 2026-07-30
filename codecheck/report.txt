@@ -1,0 +1,19 @@
+# Transcript of `python verify.py`, captured by codecheck_run.py.
+# verify.py itself writes nothing. This file is a record of what
+# it printed, not an output of it. See the module docstring.
+# exit status: 0
+#
+[ok  ] Structural invariants of the digit sequence                 14 checks
+[ok  ] Cited constants and their records                            6 checks
+[ok  ] Double derivation across two independent code paths         21 checks
+[ok  ] Frozen numbers: computed value and manuscript text agree    31 checks
+[ok  ] Manuscript number coverage: no unclaimed figures in the text   2 checks
+[ok  ] Computed values are not hard-coded anywhere in the source    1 checks
+[ok  ] Committed figure matches the committed data                  4 checks
+[ok  ] Forbidden phrases absent from every watched surface          6 checks
+[ok  ] Front matter identical at every declared location           16 checks
+[ok  ] README claim-to-check map covers the paper and the suite     3 checks
+[ok  ] Mutation evidence present and every mutant killed something   4 checks
+[ok  ] Suite self-description                                       1 checks
+
+109 checks, 0 failed
