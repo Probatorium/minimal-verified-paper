@@ -209,6 +209,24 @@ Add the frozen claim, run the verification, and only then type the value into
 the prose. A number that reaches the manuscript before it has been frozen is a
 number nothing is holding.
 
+## Ownership, for whichever lane reads this next
+
+This repository is Subject A of `defect-injection-study`, which pins one commit
+of it in `subject.py` as `DECLARED_COMMIT` and refuses to run against any other.
+Between `2026-07-28` and `2026-07-30` two lanes touched this package while that
+pin was being kept current, and the registries briefly disagreed on which commit
+was the one to trust: `subject.py` moved to `a339086` in `37de4bf` before the
+sibling study's README caught up, a gap closed in `955898c`, then both surfaces
+were retied to `2ae7cdd` in `cbec625` together with the check that makes that
+particular drift impossible to repeat. Measured against the commit history, that
+was sequence, not conflict: one author, one lane, advancing forward.
+
+From here on this repository has **one lane as owner**. Coordinate before
+pushing to it from anywhere else. A commit landing here while `DECLARED_COMMIT`
+in `defect-injection-study` is mid-update is exactly the gap `cbec625` closed;
+reopening it by working around this note would not be a new failure, it would be
+the same one.
+
 ## Licence
 
 Code under the MIT licence, text under CC BY 4.0. See `LICENSE`.
